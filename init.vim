@@ -1,29 +1,41 @@
-syntax on
-
-set smartcase
-set scrolloff=8
-set number
-set incsearch
+set guicursor=
 set relativenumber
-set tabstop=4 softtabstop=4
-set shiftwidth=4
+set nohlsearch
+set hidden
+set noerrorbells
+set tabstop=2 softtabstop=2
+set shiftwidth=2
 set expandtab
 set smartindent
-set nohlsearch
-set noerrorbells
-set signcolumn=yes
-set termguicolors
-set incsearch
-set noswapfile
+set nu
 set nowrap
+set noswapfile
+set nobackup
+set undodir=~/.vim/undodir
+set undofile
+set incsearch
+set termguicolors
+set scrolloff=8
+" set noshowmode
+set signcolumn=yes
+set isfname+=@-@
+" set ls=0
+
+" Give more space for displaying messages.
+set cmdheight=1
+
+" Having longer updatetime (default is 4000 ms = 4 s) leads to noticeable
+" delays and poor user experience.
+set updatetime=50
+
+" Don't pass messages to |ins-completion-menu|.
+set shortmess+=c
+
 set colorcolumn=80
-set noerrorbells
-set signcolumn=yes 
-set nohlsearch
+
 
 call plug#begin('~/.vim/plugged')
-Plug 'morhetz/gruvbox'
-Plug 'dense-analysis/ale'
+Plug 'gruvbox-community/gruvbox'
 Plug 'vim-airline/vim-airline'
 Plug 'tpope/vim-fugitive'
 
@@ -35,8 +47,8 @@ Plug 'nvim-lua/popup.nvim'
 Plug 'nvim-lua/plenary.nvim'
 Plug 'nvim-telescope/telescope.nvim'
 
-
-Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
+"Treesitter
+Plug 'nvim-treesitter/nvim-treesitter', {'do': ':TSUpdate'}
 
 "Telescope
 Plug 'nvim-telescope/telescope-fzf-native.nvim', { 'do': 'make' }
@@ -44,15 +56,17 @@ call plug#end()
 
 syntax enable
 let g:gruvbox_italic=1
-autocmd vimenter * ++nested colorscheme gruvbox
 
+colorscheme carbonfox
 let mapleader = " "
 " Telescope Remaps
-nnoremap <C-p> :Telescope git_files<CR> 
-nnoremap <leader>pf :Telescope find_files<CR> 
+nnoremap <C-p> :Telescope git_files<CR>
+nnoremap <leader>pf :Telescope find_files<CR>
 nnoremap <leader>rg :Telescope live_grep<CR>
 nnoremap <leader><C-d> :Telescope lsp_definitions<CR>
+nnoremap <leader><C-i> :Telescope lsp_implementationss<CR>
 nnoremap <leader><C-r> :Telescope lsp_references<CR>
+nnoremap <leader><C-s> :Telescope lsp_document_symbols<CR>
 
 nnoremap <leader><CR> :source ~/.config/nvim/init.vim<CR>
 nnoremap <leader>pv :Vex<CR>
@@ -70,25 +84,35 @@ nnoremap <leader>gh :0Gclog<CR>
 nnoremap <leader>gc :Git commit<CR>
 nnoremap <leader>gp :Git push<CR>
 
-" Telescope config
-lua << EOF
-local actions = require('telescope.actions')
-require('telescope').setup{
-    defaults = {
-        mappings = {
-            i = {
-                ["<C-j>"] = actions.move_selection_next,
-                ["<C-k>"] = actions.move_selection_previous,
-            }
-        }
-    }
-}
-EOF
-
+lua require('plugins')
 
 " LSP Configuration
 lua << EOF
-require'lspconfig'.gopls.setup{}
+vim.opt.foldexpr = "nvim_treesitter#foldexpr()"
+vim.opt.foldmethod = "expr"
+
 require'lspconfig'.tsserver.setup{}
--- require'lspconfig'.rome.setup{}
+vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float)
+vim.keymap.set('n', '<leader>a', vim.lsp.buf.hover, { buffer = 0 })
+vim.keymap.set('n', '<leader>.', vim.lsp.buf.code_action)
+
+local actions = require('telescope.actions')
+  require('telescope').setup{
+
+    defaults = {
+      mappings = {
+        i = {
+          ["<C-j>"] = actions.move_selection_next,
+          ["<C-k>"] = actions.move_selection_previous,
+        }
+      }
+    }
+  }
+
+local lsp_installer = require('nvim-lsp-installer')
+lsp_installer.on_server_ready(function(server)
+  local opts = {}
+  server:setup(opts)
+end)
+
 EOF
