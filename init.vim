@@ -121,20 +121,6 @@ lsp_installer.on_server_ready(function(server)
   server:setup(opts)
 end)
 
-require'nvim-treesitter.configs'.setup {
-  -- Parser names
-  ensure_installed = { "terraform", "typescript", "go", "lua", "typescript", "javascript", "hcl" },
-
-  sync_install = false,
-
-  auto_install = true,
-
-  highlight = {
-    enable = true,
-    additional_vim_regex_highlighting = false
-  }
-}
-
 local cmp = require'cmp'
 cmp.setup({
   window = {

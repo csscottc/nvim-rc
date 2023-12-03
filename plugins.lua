@@ -2,44 +2,53 @@ return require('packer').startup(function(use)
 	use 'wbthomason/packer.nvim'
 	use 'EdenEast/nightfox.nvim'
 	use { 'nvim-treesitter/nvim-treesitter',
-		run = function()
+    run = ':TSUpdate',
+		config = function()
 			local ts_update = require('nvim-treesitter.install').update({ with_sync = true })
 			ts_update()
 
-  require('nvim-treesitter.configs').setup {
-    -- A list of parser names, or "all"
-    ensure_installed = { "typescript", "lua", "javascript" },
-  
-    -- Install parsers synchronously (only applied to `ensure_installed`)
-    sync_install = false,
-  
-    -- Automatically install missing parsers when entering buffer
-    auto_install = true,
+      require('nvim-treesitter.configs').setup {
+        -- A list of parser names, or "all"
+        ensure_installed = { "terraform", "hcl", "go", "typescript", "lua", "javascript" },
+      
+        -- Install parsers synchronously (only applied to `ensure_installed`)
+        sync_install = false,
+      
+        -- Automatically install missing parsers when entering buffer
+        auto_install = true,
 
-    ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
-    -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
+        ---- If you need to change the installation directory of the parsers (see -> Advanced Setup)
+        -- parser_install_dir = "/some/path/to/store/parsers", -- Remember to run vim.opt.runtimepath:append("/some/path/to/store/parsers")!
 
-    highlight = {
-      -- `false` will disable the whole extension
-      enable = true,
+        highlight = {
+          -- `false` will disable the whole extension
+          enable = true,
 
-      -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
-      -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
-      -- the name of the parser)
-      -- list of language that will be disabled
-      -- disable = { "c", "rust" },
+          -- NOTE: these are the names of the parsers and not the filetype. (for example if you want to
+          -- disable highlighting for the `tex` filetype, you need to include `latex` in this list as this is
+          -- the name of the parser)
+          -- list of language that will be disabled
+          -- disable = { "c", "rust" },
 
-      -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
-      -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
-      -- Using this option may slow down your editor, and you may see some duplicate highlights.
-      -- Instead of true it can also be a list of languages
-      additional_vim_regex_highlighting = false,
-    },
-  }
+          -- Setting this to true will run `:h syntax` and tree-sitter at the same time.
+          -- Set this to `true` if you depend on 'syntax' being enabled (like for indentation).
+          -- Using this option may slow down your editor, and you may see some duplicate highlights.
+          -- Instead of true it can also be a list of languages
+          additional_vim_regex_highlighting = false,
+        },
+      }
 		end
   }
 	
-	use { 'nvim-telescope/telescope.nvim', tag = '0.1.0', requires = { { 'nvim-lua/plenary.nvim' } }}
+	use { 'nvim-telescope/telescope.nvim', tag = '0.1.0',
+    requires = {
+      { 'nvim-lua/plenary.nvim' },
+      { 'nvim-telescope/telescope-live-grep-args.nvim' }
+    },
+    config = function()
+      require('telescope').load_extension('live_grep_args')
+    end
+  }
   use { 'neovim/nvim-lspconfig' }
   use { 'williamboman/nvim-lsp-installer' }
 end)
