@@ -96,8 +96,16 @@ lua require('plugins')
 
 " LSP Configuration
 lua << EOF
-require'lspconfig'.tsserver.setup{}
-require'lspconfig'.terraformls.setup{}
+require'lspconfig'.tsserver.setup{ 
+  on_attach = on_attach,
+  filetypes = { "javascript", "javascriptreact", "javascript.jsx", "typescript", "typescriptreact", "typescript.tsx" },
+  cmd = { "typescript-language-server", "--stdio" },
+}
+require'lspconfig'.terraformls.setup{
+  on_attach = on_attach,
+  filetypes = { "terraform", "tf" },
+  filetypes = { "terraform-ls", "serve" }
+}
 vim.keymap.set('n', '<leader>d', vim.diagnostic.open_float)
 vim.keymap.set('n', '<leader>a', vim.lsp.buf.hover)
 vim.keymap.set('n', '<leader>.', vim.lsp.buf.code_action)
