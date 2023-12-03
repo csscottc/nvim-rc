@@ -1,3 +1,6 @@
 #Installation
 Create a symlink to the file in this repo.
-`ln -sf ~/.config/nvim/nvim.init nvim.init`
+```
+➜  nvim-rc git:(main) ✗ ln -sf ~/Dev/nvim-rc/plugins.lua ~/.config/nvim/lua/plugins.lua
+➜  nvim-rc git:(main) ✗ ln -sf ~/Dev/nvim-rc/init.vim ~/.config/nvim/init.vim
+```
